@@ -1,0 +1,101 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please don't paste API keys or private transcripts here.
+        For security issues, use the Security tab instead (see SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Hold ⌥ Space in Notes
+        2. Say "..."
+        3. Release
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Yaptic version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      options:
+        - GitHub Releases (.dmg)
+        - Built from source (npm run tauri build)
+        - Development (npm run tauri dev)
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "15.3"
+    validations:
+      required: true
+  - type: dropdown
+    id: chip
+    attributes:
+      label: Chip
+      options:
+        - M1
+        - M1 Pro / Max / Ultra
+        - M2 family
+        - M3 family
+        - M4 family
+        - Other / not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: microphone
+    attributes:
+      label: Microphone permission (Settings → Permissions)
+      options:
+        - Granted
+        - Not requested yet
+        - Denied
+        - Restricted
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: accessibility
+    attributes:
+      label: Accessibility permission (Settings → Permissions)
+      options:
+        - Granted
+        - Not granted
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: cleanup
+    attributes:
+      label: Cleanup
+      options:
+        - "Off"
+        - Anthropic
+        - OpenAI-compatible (cloud)
+        - OpenAI-compatible (local, e.g. Ollama or LM Studio)
+    validations:
+      required: true
+  - type: textarea
+    id: pill
+    attributes:
+      label: What did the pill or settings window show?
+      description: Any message, for example "Cleanup failed (...)" or a model error.

@@ -1,0 +1,51 @@
+[package]
+name = "yaptic"
+version = "0.1.0"
+description = "Push-to-talk voice dictation for macOS"
+authors = ["Chrisdion Andrew"]
+license = "MIT"
+repository = "https://github.com/iniandrew/yaptic"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "yaptic_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "macos-private-api"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+cpal = "0.18"
+rubato = "5"
+tauri-plugin-global-shortcut = "2"
+whisper-rs = { version = "0.16", features = ["metal"] }
+reqwest = { version = "0.13", default-features = false, features = ["native-tls", "http2", "system-proxy", "json"] }
+keyring = "4"
+sha2 = { version = "0.11", default-features = false }
+
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "NSPasteboard", "NSPasteboardItem"] }
+objc2-core-graphics = { version = "0.3", default-features = false, features = ["std", "CGEvent", "CGEventSource", "CGEventTypes", "CGRemoteOperation"] }
+objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSString", "NSData", "NSArray", "NSDictionary", "NSValue"] }
+
+# Hashing the 550 MB model in an unoptimized dev build takes about a minute.
+[profile.dev.package.sha2]
+opt-level = 3

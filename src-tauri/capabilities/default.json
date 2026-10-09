@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the settings and pill windows",
+  "windows": [
+    "main",
+    "pill"
+  ],
+  "permissions": [
+    "core:default"
+  ]
+}

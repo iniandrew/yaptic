@@ -1,0 +1,22 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-ssr/
+target/
+src-tauri/gen/schemas/
+
+# Secrets and local env
+.env*
+
+# Whisper models are downloaded by the app, never committed
+*.bin
+*.part
+
+# Local tooling
+.claude/
+.vscode/
+.idea/
+*.log
+*.local
+
+.DS_Store

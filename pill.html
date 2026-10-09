@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/pill.css" />
+    <title>Yaptic Pill</title>
+    <script type="module" src="/src/pill.ts" defer></script>
+  </head>
+  <body>
+    <div class="pill" id="pill" data-state="listening" role="status" aria-live="polite">
+      <div class="bars">
+        <span class="bar" style="--i: 0"></span>
+        <span class="bar" style="--i: 1"></span>
+        <span class="bar" style="--i: 2"></span>
+        <span class="bar" style="--i: 3"></span>
+        <span class="bar" style="--i: 4"></span>
+        <span class="bar" style="--i: 5"></span>
+        <span class="bar" style="--i: 6"></span>
+      </div>
+      <span class="caret"></span>
+      <span class="icon" id="icon" aria-hidden="true"></span>
+      <span class="label" id="label"></span>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yaptic Settings</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+
+  <body>
+    <main class="container">
+      <header>
+        <h1 class="wordmark">yaptic</h1>
+        <p class="tagline">Hold <kbd id="hotkey-inline">⌥ Space</kbd>, speak, release.</p>
+      </header>
+
+      <section>
+        <h2>Permissions</h2>
+        <div class="card">
+          <div class="field">
+            <div>
+              <div class="label">Microphone</div>
+              <p class="note" id="mic-status">Checking…</p>
+            </div>
+            <button id="mic-fix" type="button" class="secondary" hidden></button>
+          </div>
+          <div class="field">
+            <div>
+              <div class="label">Accessibility</div>
+              <p class="note" id="ax-status">Checking…</p>
+            </div>
+            <button id="ax-fix" type="button" class="secondary" hidden>
+              Open System Settings
+            </button>
+          </div>
+        </div>
+        <p class="hint">
+          In development (<code>tauri dev</code>), macOS grants these to your
+          terminal app, not Yaptic.
+        </p>
+      </section>
+
+      <section>
+        <h2>Dictation</h2>
+        <div class="card">
+          <div class="field">
+            <div>
+              <div class="label">Push-to-talk shortcut</div>
+              <p class="note" id="hotkey-hint" data-default="Hold to record, release to paste.">
+                Hold to record, release to paste.
+              </p>
+            </div>
+            <button id="hotkey" type="button" class="secondary shortcut">…</button>
+          </div>
+          <div class="field">
+            <label class="label" for="language">Language</label>
+            <select id="language">
+              <option value="auto">Auto-detect</option>
+              <option value="id">Indonesian</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <p class="note" id="language-note" hidden></p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Custom dictionary</h2>
+        <div class="card">
+          <p class="note top">
+            Names and technical terms to spell exactly. Used by transcription
+            and cleanup.
+          </p>
+          <ul id="dictionary" class="chips"></ul>
+          <form id="dictionary-form" class="row">
+            <input id="dictionary-input" placeholder="Add a term, e.g. Kubernetes" spellcheck="false" />
+            <button type="submit">Add</button>
+          </form>
+          <p class="note error" id="dictionary-error" hidden></p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Speech model</h2>
+        <div class="card">
+          <p class="status" id="model-status">Checking…</p>
+          <progress id="model-progress" max="1" value="0" hidden></progress>
+          <div class="row" id="model-actions">
+            <button id="model-download" type="button" hidden>Download</button>
+            <button id="model-cancel" type="button" class="secondary" hidden>Cancel</button>
+          </div>
+          <div class="field stacked">
+            <label class="label" for="model-path">Model file</label>
+            <div class="row">
+              <input id="model-path" spellcheck="false" autocomplete="off" />
+              <button id="model-path-apply" type="button" class="secondary">Use file</button>
+              <button id="model-path-reset" type="button" class="secondary">Default</button>
+            </div>
+            <p class="note" id="model-path-hint" data-default="Leave empty to use the downloaded large-v3-turbo model.">
+              Leave empty to use the downloaded large-v3-turbo model.
+            </p>
+          </div>
+        </div>
+        <p class="hint">Whisper runs on this Mac. Audio never leaves your computer.</p>
+      </section>
+
+      <section>
+        <h2>Cleanup</h2>
+        <div class="card">
+          <div class="field">
+            <div>
+              <label class="label" for="cleanup-enabled">Clean up with an LLM</label>
+              <p class="note" id="cleanup-summary"></p>
+            </div>
+            <input id="cleanup-enabled" type="checkbox" class="toggle" />
+          </div>
+          <div class="field">
+            <label class="label" for="provider">Provider</label>
+            <select id="provider">
+              <option value="anthropic">Anthropic</option>
+              <option value="openai_compatible">OpenAI-compatible</option>
+            </select>
+          </div>
+          <div class="field stacked">
+            <label class="label" for="base-url">Base URL</label>
+            <input id="base-url" spellcheck="false" autocomplete="off" />
+            <p class="note" id="endpoint"></p>
+            <p class="note warning" id="url-warning" hidden></p>
+          </div>
+          <div class="field stacked">
+            <label class="label" for="model">Model</label>
+            <input id="model" spellcheck="false" autocomplete="off" />
+          </div>
+          <div class="field stacked">
+            <label class="label" for="api-key">API key</label>
+            <form id="key-form" class="row">
+              <input id="api-key" type="password" autocomplete="off" spellcheck="false" />
+              <button type="submit">Save</button>
+              <button type="button" id="key-remove" class="secondary">Remove</button>
+            </form>
+            <p class="note" id="key-status"></p>
+          </div>
+          <div class="field">
+            <label class="label" for="timeout">Timeout</label>
+            <div class="row compact">
+              <input id="timeout" type="number" min="1" max="60" step="0.5" />
+              <span class="note">seconds</span>
+            </div>
+          </div>
+          <div class="field">
+            <button id="test-connection" type="button" class="secondary">Test connection</button>
+          </div>
+          <p class="note" id="test-result" hidden></p>
+          <p class="note error" id="cleanup-error" hidden></p>
+        </div>
+        <p class="hint">
+          Only transcript text is sent, never audio, and only to the provider
+          set here. If cleanup is off or fails, the raw transcript is pasted.
+        </p>
+      </section>
+
+      <section>
+        <h2>Try cleanup</h2>
+        <div class="card">
+          <textarea id="try-input" rows="3" spellcheck="false">
+um jadi meeting-nya jam 3, eh jam 4 aja, terus uh we need to review the deployment script gitu before Friday</textarea
+          >
+          <div class="row">
+            <button id="try-run" type="button" class="secondary">Clean up</button>
+            <span class="note" id="try-meta"></span>
+          </div>
+          <pre id="try-output" hidden></pre>
+        </div>
+      </section>
+
+      <section>
+        <h2>General</h2>
+        <div class="card">
+          <div class="field">
+            <label class="label" for="login">Launch at login</label>
+            <input id="login" type="checkbox" class="toggle" />
+          </div>
+          <div class="field">
+            <div>
+              <label class="label" for="paste-delay">Clipboard restore delay</label>
+              <p class="note">Raise it if an app pastes your old clipboard.</p>
+            </div>
+            <div class="row compact">
+              <input id="paste-delay" type="number" min="50" max="5000" step="50" />
+              <span class="note">ms</span>
+            </div>
+          </div>
+          <p class="note error" id="general-error" hidden></p>
+        </div>
+        <p class="hint" id="settings-path"></p>
+      </section>
+    </main>
+  </body>
+</html>
