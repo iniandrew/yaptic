@@ -37,26 +37,34 @@
 
 ### Download
 
-1. Get `Yaptic_<version>_aarch64.dmg` from
-   [Releases](https://github.com/iniandrew/yaptic/releases).
-2. Open it and drag Yaptic to Applications.
-3. Releases aren't signed with an Apple Developer ID yet, so macOS blocks the
-   first launch. Right-click Yaptic in Applications and choose **Open**, or
-   run:
+1. Get `Yaptic_<version>_aarch64.dmg` and `SHA256SUMS.txt` from
+   [Releases](https://github.com/iniandrew/yaptic/releases). Only download
+   Yaptic from this page.
+2. Check that the download is the real one. Each release is built by GitHub
+   Actions from the tagged source and comes with checksums and a signed
+   build-provenance attestation:
 
    ```bash
-   xattr -cr /Applications/Yaptic.app
+   shasum -a 256 -c SHA256SUMS.txt
+   gh attestation verify Yaptic_<version>_aarch64.dmg --repo iniandrew/yaptic
    ```
 
-Only download Yaptic from this repository's Releases page. Each release is
-built by GitHub Actions from the tagged source and comes with a
-`SHA256SUMS.txt` file and a signed build-provenance attestation, so you can
-check that your download is the real one:
+3. Open the `.dmg` and drag Yaptic to Applications.
+4. Open Yaptic. Releases aren't signed with an Apple Developer ID yet, so the
+   first launch shows *Apple could not verify "Yaptic" is free of malware…*
+   Close the message, then allow the app in one of two ways:
+   - Open **System Settings → Privacy & Security**, scroll down to
+     **Security**, click **Open Anyway** next to the message about Yaptic,
+     and confirm with your password or Touch ID.
+   - Or remove the download quarantine flag in Terminal:
 
-```bash
-shasum -a 256 -c SHA256SUMS.txt
-gh attestation verify Yaptic_<version>_aarch64.dmg --repo iniandrew/yaptic
-```
+     ```bash
+     xattr -dr com.apple.quarantine /Applications/Yaptic.app
+     ```
+
+   You only need to do this once per version. (On macOS 14 and earlier,
+   right-clicking the app and choosing **Open** also works; macOS 15 removed
+   that shortcut.)
 
 ### Build from source
 
@@ -145,8 +153,11 @@ the permissions belong to your terminal app instead.
 Settings → Speech model and press **Resume download**. Partial downloads
 continue where they stopped.
 
-**macOS says Yaptic can't be opened.** That's Gatekeeper and the unsigned
-build. Right-click → **Open**, or run `xattr -cr /Applications/Yaptic.app`.
+**macOS says it "could not verify Yaptic is free of malware".** That's
+Gatekeeper blocking an app without an Apple Developer ID signature. Go to
+System Settings → Privacy & Security and click **Open Anyway**, or run
+`xattr -dr com.apple.quarantine /Applications/Yaptic.app`. See step 4 under
+[Download](#download).
 
 **Cleanup says it failed.** The raw transcript is still pasted. Press **Test
 connection** in settings; it shows the server's real error (wrong key,
