@@ -60,6 +60,27 @@ impl PillState {
 pub fn init<R: Runtime>(app: &AppHandle<R>) {
     if let Some(window) = app.get_webview_window(PILL_WINDOW) {
         let _ = window.set_ignore_cursor_events(true);
+
+        // macOS keeps plain NSWindows off other apps' fullscreen Spaces; a nonactivating
+        // NSPanel at status level is allowed there. Borderless panels never become key,
+        // so dropping tao's NSWindow subclass loses nothing the pill uses.
+        #[cfg(target_os = "macos")]
+        if let Ok(ns_window) = window.ns_window() {
+            use objc2::{runtime::AnyObject, ClassType};
+            use objc2_app_kit::{
+                NSPanel, NSStatusWindowLevel, NSWindow, NSWindowCollectionBehavior,
+                NSWindowStyleMask,
+            };
+            let ns_window: &NSWindow = unsafe { &*ns_window.cast() };
+            unsafe { AnyObject::set_class(ns_window, NSPanel::class()) };
+            ns_window.setStyleMask(ns_window.styleMask() | NSWindowStyleMask::NonactivatingPanel);
+            ns_window.setHidesOnDeactivate(false);
+            ns_window.setLevel(NSStatusWindowLevel);
+            ns_window.setCollectionBehavior(
+                NSWindowCollectionBehavior::CanJoinAllSpaces
+                    | NSWindowCollectionBehavior::FullScreenAuxiliary,
+            );
+        }
     }
 }
 
