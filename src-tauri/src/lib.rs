@@ -11,6 +11,7 @@ mod pipeline;
 mod settings;
 mod stt;
 mod tray;
+mod update;
 
 use tauri::WindowEvent;
 
@@ -45,6 +46,8 @@ pub fn run() {
             commands::inspect_base_url,
             commands::test_cleanup_connection,
             commands::try_cleanup,
+            update::check_for_update,
+            update::open_release_page,
         ])
         .setup(|app| {
             // Menu-bar only: no dock icon. Bundled builds also get this via

@@ -66,6 +66,14 @@
    right-clicking the app and choosing **Open** also works; macOS 15 removed
    that shortcut.)
 
+### Update
+
+Yaptic doesn't update itself. In **Settings → General**, click **Check for
+updates**; if a newer release exists, **Download** opens its page. Install it
+the same way as above, replacing the old app. Because releases aren't signed
+yet, macOS may ask for the Microphone and Accessibility permissions again
+(see Troubleshooting).
+
 ### Build from source
 
 You need Xcode Command Line Tools, Rust, Node.js, and CMake:
@@ -130,7 +138,9 @@ back to the raw text.
 ## Privacy
 
 - Audio and the speech model never leave your Mac.
-- With cleanup off, nothing is sent anywhere.
+- With cleanup off, nothing is sent anywhere, except when you click **Check
+  for updates**. That sends one request to `api.github.com` with your IP
+  address and the app version, and only on that click.
 - With cleanup on, the transcript text goes to the provider and base URL you
   configured, under that provider's own privacy policy. Audio is never sent.
   With a local server such as Ollama, the text stays on your machine too.
