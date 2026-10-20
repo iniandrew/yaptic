@@ -1,3 +1,4 @@
+import { getVersion } from "@tauri-apps/api/app";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
@@ -42,6 +43,12 @@ interface Outcome {
   cleaned: boolean;
   error: string | null;
   latency_ms: number;
+}
+
+interface UpdateInfo {
+  current: string;
+  latest: string;
+  available: boolean;
 }
 
 interface PermissionStatus {
@@ -363,6 +370,34 @@ pasteDelay.addEventListener("change", () => {
   if (Number.isFinite(ms)) saveGeneral({ paste_restore_delay_ms: Math.round(ms) }, generalError);
 });
 
+// Updates -----------------------------------------------------------------
+
+const appVersion = $<HTMLSpanElement>("app-version");
+const updateCheck = $<HTMLButtonElement>("update-check");
+const updateOpen = $<HTMLButtonElement>("update-open");
+const updateNote = $<HTMLParagraphElement>("update-note");
+
+updateCheck.addEventListener("click", async () => {
+  updateCheck.disabled = true;
+  updateOpen.hidden = true;
+  show(updateNote, "Checking…");
+  try {
+    const info = await invoke<UpdateInfo>("check_for_update");
+    if (info.available) {
+      show(updateNote, `v${info.latest} is available.`, "ok");
+      updateOpen.hidden = false;
+    } else {
+      show(updateNote, "You're on the latest version.", "ok");
+    }
+  } catch (err) {
+    show(updateNote, String(err), "error");
+  } finally {
+    updateCheck.disabled = false;
+  }
+});
+
+updateOpen.addEventListener("click", () => invoke("open_release_page"));
+
 function renderGeneral() {
   if (!general) return;
   const label = formatHotkey(general.hotkey);
@@ -607,13 +642,15 @@ tryRun.addEventListener("click", async () => {
 // --------------------------------------------------------------------- init
 
 async function init() {
-  const [loadedGeneral, status, paths, loadedCleanup, loginEnabled] = await Promise.all([
+  const [loadedGeneral, status, paths, loadedCleanup, loginEnabled, version] = await Promise.all([
     invoke<GeneralSettings>("get_general"),
     invoke<ModelStatus>("model_status"),
     invoke<{ settings: string | null; default_model: string | null }>("app_paths"),
     invoke<CleanupView>("get_cleanup"),
     invoke<boolean>("launch_at_login"),
+    getVersion(),
   ]);
+  appVersion.textContent = `v${version}`;
   general = loadedGeneral;
   modelStatus = status;
   cleanup = loadedCleanup;

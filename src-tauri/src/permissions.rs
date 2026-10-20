@@ -66,7 +66,7 @@ pub fn open_accessibility_settings() {
     open_url(ACCESSIBILITY_SETTINGS_URL);
 }
 
-fn open_url(url: &str) {
+pub fn open_url(url: &str) {
     if let Err(e) = Command::new("open").arg(url).spawn() {
         eprintln!("[permissions] open System Settings: {e}");
     }
